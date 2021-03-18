@@ -12,8 +12,10 @@ from validation.metrics import calculate_metrics
 import os
 import colorama
 from colorama import Fore, Back, Style
+from p_logging import val_logging
 from torchsummary import summary
 from torchvision import datasets
+import datetime
 
 
 def train(
@@ -40,6 +42,9 @@ def train(
     :param weights_pth: Path to weights from previous training.
     :return: None.
     """
+    # Training start time
+    start_datetime = datetime.datetime.now()
+
     # Computing device
     dev = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -196,6 +201,12 @@ def train(
                     last_val_loss = val_loss
                     print(val_msg)
 
+                    # Validation logg
+                    logg_file_pth = os.path.join(
+                        "loggs/", f"{start_datetime.isoformat()}.csv"
+                    )
+                    val_logging.val_metrics_logger(metrics, logg_file_pth)
+
         scheduler.step(epoch_loss / n_train)
         epoch_msg = (
             f"Trained epoch {epoch + 1:02d} with loss {epoch_loss / n_train:.3e} "
@@ -214,10 +225,10 @@ def train(
 def main():
     colorama.init(autoreset=True)
 
-    train_img = "/data/SE_Perception/Machine-learning/Segmentation/Datasets/RailSem19/RailSem19_original/rs19_val/jpgs/rs19_val/train/"
-    train_msk = "/data/SE_Perception/Machine-learning/Segmentation/Datasets/RailSem19/RailSem19_bin_02/train/"
-    val_img = "/data/SE_Perception/Machine-learning/Segmentation/Datasets/RailSem19/RailSem19_original/rs19_val/jpgs/rs19_val/val/"
-    val_msk = "/data/SE_Perception/Machine-learning/Segmentation/Datasets/RailSem19/RailSem19_bin_02/val/"
+    train_img = "/home/flo/git-repos/masterarbeit_code/data/masks/rs19_val_rail_raised/train/"
+    train_msk = "/home/flo/git-repos/masterarbeit_code/data/masks/rs19_val_bin_rail_raised/train/"
+    val_img = "/home/flo/git-repos/masterarbeit_code/data/masks/rs19_val_rail_raised/val/"
+    val_msk = "/home/flo/git-repos/masterarbeit_code/data/masks/rs19_val_bin_rail_raised/val/"
     weights_pth = None  # "weight/CP_epoch26.pth"
     train(
         train_img,
@@ -226,7 +237,7 @@ def main():
         val_msk,
         res_scale=0.2,
         epochs=80000,
-        bs=12,
+        bs=1,
         lr=1e-3,
         weights_pth=weights_pth,
     )
