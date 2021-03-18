@@ -47,7 +47,7 @@ def train(
     net = UNet()
     net = net.to(dev)
     # Prepare data parallel
-    # net = nn.DataParallel(net)
+    net = nn.DataParallel(net)
 
     # Load weights
     if weights_pth is not None:
@@ -214,19 +214,19 @@ def train(
 def main():
     colorama.init(autoreset=True)
 
-    train_img = "/media/flo/External/files_not_unter_backup/rs19_val/jpgs/train/"
-    train_msk = "/home/flo/git-repos/masterarbeit_code/data/masks/rs19_val_bin/train/"
-    val_img = "/media/flo/External/files_not_unter_backup/rs19_val/jpgs/val/"
-    val_msk = "/home/flo/git-repos/masterarbeit_code/data/masks/rs19_val_bin/val/"
+    train_img = "/data/SE_Perception/Machine-learning/Segmentation/Datasets/RailSem19/RailSem19_original/rs19_val/jpgs/rs19_val/train/"
+    train_msk = "/data/SE_Perception/Machine-learning/Segmentation/Datasets/RailSem19/RailSem19_bin_02/train/"
+    val_img = "/data/SE_Perception/Machine-learning/Segmentation/Datasets/RailSem19/RailSem19_original/rs19_val/jpgs/rs19_val/val/"
+    val_msk = "/data/SE_Perception/Machine-learning/Segmentation/Datasets/RailSem19/RailSem19_bin_02/val/"
     weights_pth = None  # "weight/CP_epoch26.pth"
     train(
         train_img,
         train_msk,
         val_img,
         val_msk,
-        res_scale=0.1,
-        epochs=100,
-        bs=2,
+        res_scale=0.2,
+        epochs=80000,
+        bs=12,
         lr=1e-3,
         weights_pth=weights_pth,
     )

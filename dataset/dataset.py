@@ -83,7 +83,7 @@ class RailData(Dataset):
         # List transformations
         transform = A.Compose(
             [
-                A.RandomResizedCrop(height=new_height, width=new_width, p=0.9),
+                A.RandomResizedCrop(height=new_height, width=new_width, p=0.9, scale=(0.8, 1.0,)),
                 A.HorizontalFlip(p=0.5),
                 A.RandomBrightnessContrast(p=0.2),
                 A.Rotate(limit=(-2, 2,), p=0.9)
